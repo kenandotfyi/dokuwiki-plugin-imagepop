@@ -18,6 +18,11 @@ class admin_plugin_imagepop extends AdminPlugin
         return 930;
     }
 
+    public function getMenuIcon()
+    {
+        return __DIR__ . '/admin.svg';
+    }
+
     public function getMenuText($language)
     {
         return $this->getLang('menu');
