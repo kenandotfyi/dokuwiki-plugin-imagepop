@@ -10,6 +10,11 @@ ImagePop opens images in DokuWiki page content in a gallery overlay. Images rend
 - Close with Escape or by clicking the dark area around the image.
 - Captions use the image's `title` or `alt` text.
 - Works with images in the main page and content loaded into Simpl panes.
+- Configure the CSS selectors that identify eligible images under **Admin → ImagePop**. The defaults match DokuWiki's standard media alignment classes; selectors must match image elements and may be comma-separated.
+
+## Settings
+
+ImagePop stores its selector setting through DokuWiki's Configuration Manager. For example, `img.media, img.diagram` includes standard media images and images with a custom `diagram` class. The selector is evaluated against each page's image elements when a gallery is opened.
 
 ## Installation
 

@@ -3,4 +3,4 @@ author Kenan Akinci
 email  hey@kenan.fyi
 date   2026-10-12
 name   ImagePop
-desc   Opens page images in a zoomable gallery overlay with thumbnails.
+desc   Opens selected page images in a zoomable gallery overlay with thumbnails; selectors are configurable in the admin menu.

@@ -11,7 +11,24 @@
     let panX = 0;
     let panY = 0;
     let dragState = null;
-    const CONTENT_IMAGE_SELECTOR = 'img.media, img.medialeft, img.mediaright, img.mediacenter';
+    const DEFAULT_IMAGE_SELECTOR = 'img.media, img.medialeft, img.mediaright, img.mediacenter';
+    const imagePopConfig = typeof JSINFO !== 'undefined' && JSINFO.imagepop ? JSINFO.imagepop : {};
+    const CONTENT_IMAGE_SELECTOR = typeof imagePopConfig.imageSelector === 'string'
+        ? imagePopConfig.imageSelector.trim() || DEFAULT_IMAGE_SELECTOR
+        : DEFAULT_IMAGE_SELECTOR;
+    let invalidSelectorReported = false;
+
+    function matchesContentImage(image) {
+        try {
+            return image.matches(CONTENT_IMAGE_SELECTOR);
+        } catch (error) {
+            if (!invalidSelectorReported) {
+                console.warn('ImagePop: the configured image selector is invalid.', error);
+                invalidSelectorReported = true;
+            }
+            return false;
+        }
+    }
 
     function getImageSource(image) {
         const anchor = image.closest('a[href]');
@@ -44,7 +61,17 @@
     }
 
     function imageItems(root) {
-        return Array.from(root.querySelectorAll(CONTENT_IMAGE_SELECTOR)).map((image) => ({
+        let images;
+        try {
+            images = Array.from(root.querySelectorAll(CONTENT_IMAGE_SELECTOR));
+        } catch (error) {
+            if (!invalidSelectorReported) {
+                console.warn('ImagePop: the configured image selector is invalid.', error);
+                invalidSelectorReported = true;
+            }
+            return [];
+        }
+        return images.filter((image) => image instanceof HTMLImageElement).map((image) => ({
             source: getImageSource(image),
             thumbnailSource: image.currentSrc || image.src,
             alt: image.getAttribute('alt') || '',
@@ -286,7 +313,7 @@
         const target = event.target instanceof Element ? event.target : null;
         const image = target && (target.matches('img') ? target : target.closest('img'));
         const root = image && image.closest('.page.group');
-        if (!image || !image.matches(CONTENT_IMAGE_SELECTOR) || !root) return;
+        if (!image || !matchesContentImage(image) || !root) return;
 
         const items = imageItems(root);
         const index = items.findIndex((item) => item.element === image);
